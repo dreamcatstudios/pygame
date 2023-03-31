@@ -1,6 +1,7 @@
 import pygame 
 from support import import_folder
 
+
 class Player(pygame.sprite.Sprite):
 	def __init__(self,pos,surface,create_jump_particles):
 		super().__init__()
@@ -102,6 +103,8 @@ class Player(pygame.sprite.Sprite):
 		if keys[pygame.K_SPACE] and self.on_ground:
 			self.jump()
 			self.create_jump_particles(self.rect.midbottom)
+
+
 
 	def get_status(self):
 		if self.direction.y < 0:
