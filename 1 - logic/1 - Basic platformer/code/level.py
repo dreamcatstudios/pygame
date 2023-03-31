@@ -48,9 +48,12 @@ class Level:
 			for col_index,cell in enumerate(row):
 				x = col_index * tile_size
 				y = row_index * tile_size
-				
+
 				if cell == 'X':
-					tile = Tile((x,y),tile_size)
+					tile = Tile((x, y), tile_size, 'white')
+					self.tiles.add(tile)
+				elif cell == 'Y':
+					tile = Tile((x, y), tile_size, 'black')
 					self.tiles.add(tile)
 				if cell == 'P':
 					player_sprite = Player((x,y),self.display_surface,self.create_jump_particles)
