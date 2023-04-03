@@ -6,7 +6,9 @@ from particles import ParticleEffect
 
 class Level:
 	def __init__(self,level_data,surface):
-		
+		self.level_data = level_data
+		self.white_tiles_enabled = True
+		self.black_tiles_enabled = False
 		# level setup
 		self.display_surface = surface 
 		self.setup_level(level_data)
@@ -16,6 +18,28 @@ class Level:
 		# dust 
 		self.dust_sprite = pygame.sprite.GroupSingle()
 		self.player_on_ground = False
+
+	def redraw_level(self):
+		player_pos = self.player.sprite.rect.topleft
+		self.tiles.empty()  # remove all current tiles
+		self.setup_level(self.level_data)  # redraw level with updated tile settings
+		self.player.sprite.rect.topleft = player_pos
+
+	def disable_black_tiles(self):
+		self.black_tiles_enabled = False
+		self.redraw_level()  # redraw level after disabling black tiles
+
+	def enable_black_tiles(self):
+		self.black_tiles_enabled = True
+		self.redraw_level()  # redraw level after enabling black tiles
+
+	def disable_white_tiles(self):
+		self.white_tiles_enabled = False
+		self.redraw_level()  # redraw level after disabling white tiles
+
+	def enable_white_tiles(self):
+		self.white_tiles_enabled = True
+		self.redraw_level()  # redraw level after enabling white tiles
 
 	def create_jump_particles(self,pos):
 		if self.player.sprite.facing_right:
@@ -49,15 +73,19 @@ class Level:
 				x = col_index * tile_size
 				y = row_index * tile_size
 
-				if cell == 'X':
+				if cell == 'X' and self.white_tiles_enabled:  # only create white tiles if flag is True
 					tile = Tile((x, y), tile_size, 'white')
 					self.tiles.add(tile)
-				elif cell == 'Y':
+				elif cell == 'Y' and self.black_tiles_enabled:  # only create black tiles if flag is True
 					tile = Tile((x, y), tile_size, 'black')
 					self.tiles.add(tile)
-				if cell == 'P':
-					player_sprite = Player((x,y),self.display_surface,self.create_jump_particles)
+				elif cell == 'Z':  # only create black tiles if flag is True
+					tile = Tile((x, y), tile_size, 'grey')
+					self.tiles.add(tile)
+				if cell == 'P' and not self.player.sprites():  # only create player sprite if one does not already exist
+					player_sprite = Player((x, y), self.display_surface, self.create_jump_particles)
 					self.player.add(player_sprite)
+
 
 	def scroll_x(self):
 		player = self.player.sprite
@@ -132,3 +160,5 @@ class Level:
 		self.vertical_movement_collision()
 		self.create_landing_dust()
 		self.player.draw(self.display_surface)
+
+
