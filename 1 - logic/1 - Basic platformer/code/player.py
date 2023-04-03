@@ -5,13 +5,14 @@ from support import import_folder
 class Player(pygame.sprite.Sprite):
 	def __init__(self,pos,surface,create_jump_particles):
 		super().__init__()
+
 		self.import_character_assets()
 		self.frame_index = 0
 		self.animation_speed = 0.15
 		self.image = self.animations['idle'][self.frame_index]
 		self.rect = self.image.get_rect(topleft = pos)
-		
-		# dust particles 
+
+		# dust particles
 		self.import_dust_run_particles()
 		self.dust_frame_index = 0
 		self.dust_animation_speed = 0.15
@@ -20,13 +21,13 @@ class Player(pygame.sprite.Sprite):
 
 		# player movement
 		self.direction = pygame.math.Vector2(0,0)
-		self.speed = 8
+		self.speed = 1
 		self.gravity = 0.8
-		self.jump_speed = -16
+		self.jump_speed = -15
 
 		# player status
 		self.status = 'idle'
-		self.facing_right = True
+		self.facing_right = False
 		self.on_ground = False
 		self.on_ceiling = False
 		self.on_left = False
@@ -46,7 +47,7 @@ class Player(pygame.sprite.Sprite):
 	def animate(self):
 		animation = self.animations[self.status]
 
-		# loop over frame index 
+		# loop over frame index
 		self.frame_index += self.animation_speed
 		if self.frame_index >= len(animation):
 			self.frame_index = 0
@@ -91,6 +92,8 @@ class Player(pygame.sprite.Sprite):
 	def get_input(self):
 		keys = pygame.key.get_pressed()
 
+		original_pos = self.rect.topleft
+
 		if keys[pygame.K_RIGHT]:
 			self.direction.x = 1
 			self.facing_right = True
@@ -104,7 +107,20 @@ class Player(pygame.sprite.Sprite):
 			self.jump()
 			self.create_jump_particles(self.rect.midbottom)
 
+		if self.rect.x > 1200:
+			self.start_pos.x += 1200
+			self.rect.x -= 1200
+		elif self.rect.x < 0:
+			self.start_pos.x -= 1200
+			self.rect.x += 1200
 
+		if keys[pygame.K_y] or keys[pygame.K_u]:
+			self.direction = pygame.math.Vector2(0, 0)
+			self.status = 'idle'
+			if self.rect.left <= 0:
+				self.rect.left = 0
+			elif self.rect.right >= 1200:
+				self.rect.right = 1200
 
 	def get_status(self):
 		if self.direction.y < 0:
