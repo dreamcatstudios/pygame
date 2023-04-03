@@ -19,10 +19,14 @@ while True:
 			sys.exit()
 		elif event.type == pygame.KEYDOWN:
 			if event.key == pygame.K_u:
-				color = white
-
-			if event.key == pygame.K_y:
 				color = black
+				level.disable_black_tiles()  # call method to disable black tiles
+				level.enable_white_tiles()  # call method to enable white tiles
+			if event.key == pygame.K_y:
+				color = white
+				level.disable_white_tiles()  # call method to disable white tiles
+				level.enable_black_tiles()
+
 	screen.fill(color)
 	level.run()
 
